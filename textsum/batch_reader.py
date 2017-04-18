@@ -29,7 +29,7 @@ import data
 
 ModelInput = namedtuple('ModelInput',
                         'enc_input dec_input target enc_len dec_len '
-                        'origin_article origin_abstract')
+                        'origin_article origin_abstract cnt')
 
 BUCKET_CACHE_BATCH = 100
 QUEUE_NUM_BATCH = 100
@@ -110,9 +110,10 @@ class Batcher(object):
     origin_abstracts = ['None'] * self._hps.batch_size
 
     buckets = self._bucket_input_queue.get()
+    cnts = []
     for i in xrange(self._hps.batch_size):
       (enc_inputs, dec_inputs, targets, enc_input_len, dec_output_len,
-       article, abstract) = buckets[i]
+       article, abstract,cnt) = buckets[i]
 
       origin_articles[i] = article
       origin_abstracts[i] = abstract
@@ -123,21 +124,29 @@ class Batcher(object):
       target_batch[i, :] = targets[:]
       for j in xrange(dec_output_len):
         loss_weights[i][j] = 1
+      cnts.append(cnt)
     return (enc_batch, dec_batch, target_batch, enc_input_lens, dec_output_lens,
-            loss_weights, origin_articles, origin_abstracts)
+            loss_weights, origin_articles, origin_abstracts,cnts)
+
+  def _CustomGenerator(self,data_path):
+    with open(data_path) as f:
+      for i,line in enumerate(f):
+        junk1, junk2, title, article = line.split('\t')
+        yield (i,article,title)
 
   def _FillInputQueue(self):
     """Fill input queue with ModelInput."""
     start_id = self._vocab.WordToId(data.SENTENCE_START)
     end_id = self._vocab.WordToId(data.SENTENCE_END)
     pad_id = self._vocab.WordToId(data.PAD_TOKEN)
-    input_gen = self._TextGenerator(data.ExampleGen(self._data_path))
+    #input_gen = self._TextGenerator(data.ExampleGen(self._data_path))
+    input_gen = self._CustomGenerator(self._data_path)
     while True:
-      (article, abstract) = input_gen.next()
-      article_sentences = [sent.strip() for sent in
-                           data.ToSentences(article, include_token=False)]
-      abstract_sentences = [sent.strip() for sent in
-                            data.ToSentences(abstract, include_token=False)]
+      (cnt, article, abstract) = input_gen.next()
+      #article_sentences = [sent.strip() for sent in data.ToSentences(article, include_token=False)]
+      #abstract_sentences = [sent.strip() for sent in data.ToSentences(abstract, include_token=False)]
+      article_sentences = [article]
+      abstract_sentences = [abstract]
 
       enc_inputs = []
       # Use the <s> as the <GO> symbol for decoder inputs.
@@ -192,7 +201,7 @@ class Batcher(object):
 
       element = ModelInput(enc_inputs, dec_inputs, targets, enc_input_len,
                            dec_output_len, ' '.join(article_sentences),
-                           ' '.join(abstract_sentences))
+                           ' '.join(abstract_sentences),cnt)
       self._input_queue.put(element)
 
   def _FillBucketInputQueue(self):
