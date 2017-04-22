@@ -28,7 +28,7 @@ import tensorflow as tf
 import batch_reader
 import data
 import seq2seq_attention_decode
-import seq2seq_attention_model
+import seq2seq_attention_model_v2
 import numpy as np
 
 FLAGS = tf.app.flags.FLAGS
@@ -36,6 +36,7 @@ tf.app.flags.DEFINE_string('data_path',
                            '', 'Path expression to tf.Example.')
 tf.app.flags.DEFINE_string('vocab_path',
                            '', 'Path expression to text vocabulary file.')
+tf.app.flags.DEFINE_string('w2v_file', '', 'Word2Vec file')
 tf.app.flags.DEFINE_string('article_key', 'article',
                            'tf.Example feature key for article.')
 tf.app.flags.DEFINE_string('abstract_key', 'headline',
@@ -105,7 +106,7 @@ def _Train(model, data_batcher):
     step = 0
     while not sv.should_stop() and step < FLAGS.max_run_steps:
       (article_batch, abstract_batch, targets, article_lens, abstract_lens,
-       loss_weights, _, _,cnts,bsize) = data_batcher.NextBatch()
+       loss_weights, _, _,cnts) = data_batcher.NextBatch()
       (_, summaries, loss, train_step) = model.run_train_step(
           sess, article_batch, abstract_batch, targets, article_lens,
           abstract_lens, loss_weights,None)
@@ -116,7 +117,7 @@ def _Train(model, data_batcher):
       step += 1
       if step % 100 == 0:
         summary_writer.flush()
-      print('step: {} \tbatch_size: {}\tprocessing {} to {} \t avg_loss: {}'.format(step,bsize, np.min(cnts), np.max(cnts), running_avg_loss))
+      print('step: {} \t processing {} to {} \t avg_loss: {}'.format(step, np.min(cnts), np.max(cnts), running_avg_loss))
     sv.Stop()
     return running_avg_loss
 
@@ -144,7 +145,7 @@ def _Eval(model, data_batcher, vocab=None):
     saver.restore(sess, ckpt_state.model_checkpoint_path)
 
     (article_batch, abstract_batch, targets, article_lens, abstract_lens,
-     loss_weights, _, _,cnts,bsize) = data_batcher.NextBatch()
+     loss_weights, _, _,cnts) = data_batcher.NextBatch()
     (summaries, loss, train_step) = model.run_eval_step(
         sess, article_batch, abstract_batch, targets, article_lens,
         abstract_lens, loss_weights,None)
@@ -158,13 +159,13 @@ def _Eval(model, data_batcher, vocab=None):
     summary_writer.add_summary(summaries, train_step)
     running_avg_loss = _RunningAvgLoss(
         running_avg_loss, loss, summary_writer, train_step)
-    print('step: {} \t batch_size:{}\tprocessing {} to {} \t avg_loss: {}'.format(step,bsize, np.min(cnts), np.max(cnts),running_avg_loss))
+    print('step: {} \t processing {} to {} \t avg_loss: {}'.format(step, np.min(cnts), np.max(cnts),running_avg_loss))
     if step % 100 == 0:
       summary_writer.flush()
 
 
 def main(unused_argv):
-  vocab = data.Vocab(FLAGS.vocab_path, 1000000)
+  vocab = data.Vocab(FLAGS.vocab_path, 1000000,FLAGS.w2v_file)
   # Check for presence of required special tokens.
   assert vocab.CheckVocab(data.PAD_TOKEN) >= 0
   assert vocab.CheckVocab(data.UNKNOWN_TOKEN) >= 0

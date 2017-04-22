@@ -126,7 +126,7 @@ class Batcher(object):
         loss_weights[i][j] = 1
       cnts.append(cnt)
     return (enc_batch, dec_batch, target_batch, enc_input_lens, dec_output_lens,
-            loss_weights, origin_articles, origin_abstracts,cnts)
+            loss_weights, origin_articles, origin_abstracts,cnts,self._hps.batch_size)
 
   def _CustomGenerator(self,data_path):
     with open(data_path) as f:

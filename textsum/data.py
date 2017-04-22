@@ -19,7 +19,7 @@ import glob
 import random
 import struct
 import sys
-
+import operator
 from tensorflow.core.example import example_pb2
 
 
@@ -37,11 +37,11 @@ DOCUMENT_END = '</d>'
 class Vocab(object):
   """Vocabulary class for mapping words and ids."""
 
-  def __init__(self, vocab_file, max_size):
+  def __init__(self, vocab_file, max_size,w2v_file=None):
     self._word_to_id = {}
     self._id_to_word = {}
     self._count = 0
-
+    self._wordEmbedding = []
     with open(vocab_file, 'r') as vocab_f:
       for line in vocab_f:
         pieces = line.split()
@@ -55,12 +55,14 @@ class Vocab(object):
         self._count += 1
         if self._count > max_size:
           raise ValueError('Too many words: >%d.' % max_size)
+    if w2v_file:
+      self.MakeWordEmbedding(w2v_file)
 
   def CheckVocab(self, word):
     if word not in self._word_to_id:
       return None
     return self._word_to_id[word]
-  
+
   def WordToId(self, word):
     if word not in self._word_to_id:
       return self._word_to_id[UNKNOWN_TOKEN]
@@ -74,6 +76,27 @@ class Vocab(object):
   def NumIds(self):
     return self._count
 
+  def MakeWordEmbedding(self, w2v_file):
+    wordDict = {}
+    self._wordEmbedding = []
+    word_dim = 0
+    with open(w2v_file) as wf:
+        for line in wf:
+            info = line.strip().split()
+            word = info[0]
+            coef = np.asarray(info[1:], dtype='float32')
+            wordDict[word] = coef
+            word_dim = len(coef)
+
+    sorted_x = sorted(self._word_to_id.items(), key=operator.itemgetter(1))
+    for word,id in sorted_x:
+        if word.lower() in wordDict:
+            self._wordEmbedding.append(wordDict[word.lower()])
+        else:
+            self._wordEmbedding.append(np.zeros(word_dim))
+
+  def GetWordEmbedding():
+    return self._wordEmbedding
 
 def ExampleGen(data_path, num_epochs=None):
   """Generates tf.Examples from path of data files.
