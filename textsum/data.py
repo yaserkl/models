@@ -21,7 +21,7 @@ import struct
 import sys
 import operator
 from tensorflow.core.example import example_pb2
-
+import numpy as np
 
 # Special tokens
 PARAGRAPH_START = '<p>'
@@ -95,7 +95,7 @@ class Vocab(object):
         else:
             self._wordEmbedding.append(np.zeros(word_dim))
 
-  def GetWordEmbedding():
+  def GetWordEmbedding(self):
     return self._wordEmbedding
 
 def ExampleGen(data_path, num_epochs=None):

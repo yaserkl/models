@@ -65,7 +65,7 @@ class Seq2SeqAttentionModel(object):
         self._cur_gpu = 0
 
     def run_train_step(self, sess, article_batch, abstract_batch, targets,
-                     article_lens, abstract_lens, loss_weights, wordEmbedding):
+                     article_lens, abstract_lens, loss_weights):
         to_return = [self._train_op, self._summaries, self._loss, self.global_step]
         return sess.run(to_return,
                         feed_dict={self._articles: article_batch,
@@ -78,7 +78,7 @@ class Seq2SeqAttentionModel(object):
                                   })
 
     def run_eval_step(self, sess, article_batch, abstract_batch, targets,
-                    article_lens, abstract_lens, loss_weights, wordEmbedding):
+                    article_lens, abstract_lens, loss_weights):
         to_return = [self._summaries, self._loss, self.global_step]
         return sess.run(to_return,
                         feed_dict={self._articles: article_batch,
@@ -91,7 +91,7 @@ class Seq2SeqAttentionModel(object):
                                   })
 
     def run_decode_step(self, sess, article_batch, abstract_batch, targets,
-                      article_lens, abstract_lens, loss_weights, wordEmbedding):
+                      article_lens, abstract_lens, loss_weights):
         to_return = [self._outputs, self.global_step]
         return sess.run(to_return,
                         feed_dict={self._articles: article_batch,

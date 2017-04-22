@@ -28,7 +28,7 @@ import tensorflow as tf
 import batch_reader
 import data
 import seq2seq_attention_decode
-import seq2seq_attention_model_v2
+import seq2seq_attention_model_v2 as seq2seq_attention_model
 import numpy as np
 
 FLAGS = tf.app.flags.FLAGS
@@ -106,10 +106,10 @@ def _Train(model, data_batcher):
     step = 0
     while not sv.should_stop() and step < FLAGS.max_run_steps:
       (article_batch, abstract_batch, targets, article_lens, abstract_lens,
-       loss_weights, _, _,cnts) = data_batcher.NextBatch()
+       loss_weights, _, _,cnts,batch_size) = data_batcher.NextBatch()
       (_, summaries, loss, train_step) = model.run_train_step(
           sess, article_batch, abstract_batch, targets, article_lens,
-          abstract_lens, loss_weights,None)
+          abstract_lens, loss_weights)
 
       summary_writer.add_summary(summaries, train_step)
       running_avg_loss = _RunningAvgLoss(
@@ -117,7 +117,7 @@ def _Train(model, data_batcher):
       step += 1
       if step % 100 == 0:
         summary_writer.flush()
-      print('step: {} \t processing {} to {} \t avg_loss: {}'.format(step, np.min(cnts), np.max(cnts), running_avg_loss))
+      print('step: {} \t processing {} to {} \t batch_size: {} \t avg_loss: {}'.format(step, np.min(cnts), np.max(cnts), batch_size, running_avg_loss))
     sv.Stop()
     return running_avg_loss
 
@@ -148,7 +148,7 @@ def _Eval(model, data_batcher, vocab=None):
      loss_weights, _, _,cnts) = data_batcher.NextBatch()
     (summaries, loss, train_step) = model.run_eval_step(
         sess, article_batch, abstract_batch, targets, article_lens,
-        abstract_lens, loss_weights,None)
+        abstract_lens, loss_weights)
     tf.logging.info(
         'article:  %s',
         ' '.join(data.Ids2Words(article_batch[0][:].tolist(), vocab)))
