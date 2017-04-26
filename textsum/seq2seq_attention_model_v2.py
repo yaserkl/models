@@ -170,6 +170,9 @@ class Seq2SeqAttentionModel(object):
         encoder_outputs = emb_encoder_inputs
 
         with tf.variable_scope('output_projection'):
+            # TODO: change the output vocabulary to use only the word set coming from this batch
+            #       rather than the whole dictionary
+            # REFERTO: (Abstractive Text Summarization using Sequence-to-sequence RNNS and Beyond)
             w = tf.get_variable('w', [hps.num_hidden, vsize], dtype=tf.float32,initializer=tf.truncated_normal_initializer(stddev=1e-4))
             w_t = tf.transpose(w)
             v = tf.get_variable('v', [vsize], dtype=tf.float32,initializer=tf.truncated_normal_initializer(stddev=1e-4))
@@ -248,7 +251,8 @@ class Seq2SeqAttentionModel(object):
         """
         results = sess.run([self._enc_top_states, self._dec_in_state],
                            feed_dict={self._articles: enc_inputs,
-                                      self._article_lens: enc_len})
+                                      self._article_lens: enc_len,
+                                      self._embedding_placeholder: self._vocab.GetWordEmbedding()})
         return results[0], results[1][0]
 
     def decode_topk(self, sess, latest_tokens, enc_top_states, dec_init_states):
@@ -260,11 +264,10 @@ class Seq2SeqAttentionModel(object):
             self._abstracts:
                 np.transpose(np.array([latest_tokens])),
             self._abstract_lens: np.ones([len(dec_init_states)], np.int32)}
-
         results = sess.run(
             [self._topk_ids, self._topk_log_probs, self._dec_out_state],
             feed_dict=feed)
-
+        os.exit()
         ids, probs, states = results[0], results[1], results[2]
         new_states = [s for s in states]
         return ids, probs, new_states
