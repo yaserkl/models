@@ -27,6 +27,7 @@ tf.app.flags.DEFINE_string('command', 'text_to_binary',
                            'Specify FLAGS.in_directories accordingly.')
 tf.app.flags.DEFINE_string('article_directories', '', 'path to title article directory')
 tf.app.flags.DEFINE_string('title_directories', '', 'path to main article directory')
+tf.app.flags.DEFINE_string('in_directories', '', 'path to main article directory')
 tf.app.flags.DEFINE_string('out_files', '', 'comma separated paths to files')
 tf.app.flags.DEFINE_string('split', '', 'comma separated fractions of data')
 
@@ -128,8 +129,4 @@ if __name__ == '__main__':
 #  --in_directories  /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title\
 #  --out_files data/custom-vocab
 
-#python textsum_data_convert.py \
-#  --command text_to_binary \
-#  --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title \
-#  --out_files data/2010-train.bin,data/2010-validation.bin,data/2010-test.bin \
-#  --split 0.8,0.15,0.05
+#python textsum_data_convert.py --command text_to_binary --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title --out_files data/2010-train.bin,data/2010-validation.bin,data/2010-test.bin --split 0.8,0.15,0.05
