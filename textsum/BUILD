@@ -20,8 +20,27 @@ py_library(
 )
 
 py_library(
+    name = "seq2seq_attention_model_v2",
+    srcs = ["seq2seq_attention_model_v2.py"],
+    deps = [
+        ":seq2seq_lib",
+    ],
+)
+
+py_library(
     name = "seq2seq_lib",
     srcs = ["seq2seq_lib.py"],
+)
+
+py_binary(
+    name = "seq2seq_attention_v2",
+    srcs = ["seq2seq_attention_v2.py"],
+    deps = [
+        ":batch_reader",
+        ":data",
+        ":seq2seq_attention_decode",
+        ":seq2seq_attention_model_v2",
+    ],
 )
 
 py_binary(

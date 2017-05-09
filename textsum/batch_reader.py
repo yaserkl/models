@@ -139,14 +139,14 @@ class Batcher(object):
     start_id = self._vocab.WordToId(data.SENTENCE_START)
     end_id = self._vocab.WordToId(data.SENTENCE_END)
     pad_id = self._vocab.WordToId(data.PAD_TOKEN)
-    #input_gen = self._TextGenerator(data.ExampleGen(self._data_path))
-    input_gen = self._CustomGenerator(self._data_path)
+    input_gen = self._TextGenerator(data.ExampleGen(self._data_path))
+    #input_gen = self._CustomGenerator(self._data_path)
     while True:
       (cnt, article, abstract) = input_gen.next()
-      #article_sentences = [sent.strip() for sent in data.ToSentences(article, include_token=False)]
-      #abstract_sentences = [sent.strip() for sent in data.ToSentences(abstract, include_token=False)]
-      article_sentences = [article]
-      abstract_sentences = [abstract]
+      article_sentences = [sent.strip() for sent in data.ToSentences(article, include_token=False)]
+      abstract_sentences = [sent.strip() for sent in data.ToSentences(abstract, include_token=False)]
+      #article_sentences = [article]
+      #abstract_sentences = [abstract]
 
       enc_inputs = []
       # Use the <s> as the <GO> symbol for decoder inputs.
@@ -250,16 +250,18 @@ class Batcher(object):
 
   def _TextGenerator(self, example_gen):
     """Generates article and abstract text from tf.Example."""
+    cnt = 0
     while True:
       e = example_gen.next()
       try:
         article_text = self._GetExFeatureText(e, self._article_key)
         abstract_text = self._GetExFeatureText(e, self._abstract_key)
+        cnt += 1
       except ValueError:
         tf.logging.error('Failed to get article or abstract from example')
         continue
 
-      yield (article_text, abstract_text)
+      yield (cnt, article_text, abstract_text)
 
   def _GetExFeatureText(self, ex, key):
     """Extract text for a feature from td.Example.
