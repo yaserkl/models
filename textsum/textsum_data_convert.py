@@ -87,7 +87,7 @@ def _convert_files_to_binary(input_filenames, start_index, end_index, output_fil
 
       title = '<d><p><s>' + title + '</s></p></d>'
 
-      body = document_parts[1].decode('utf8').replace('\n', ' ').replace('\t', ' ')
+      body = document.replace('\n', ' ').replace('\t', ' ')
       sentences = sent_tokenize(body)
       body = '<d><p>' + ' '.join(['<s>' + sentence + '</s>' for sentence in sentences]) + '</p></d>'
       body = body.encode('utf8')
