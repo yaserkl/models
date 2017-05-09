@@ -47,7 +47,7 @@ def _text_to_binary(article_directory, title_directory, output_filenames, split_
     start_from_index = end_index
 
 def _text_to_vocabulary(article_directory, vocabulary_filename, max_words=200000):
-  filenames = _get_filenames(article_directory,title_directory)
+  filenames = _get_filenames(article_directory,article_directory)
 
   counter = collections.Counter()
 
@@ -123,9 +123,6 @@ if __name__ == '__main__':
   tf.app.run()
 
 
-#python textsum_data_convert.py \
-#  --command text_to_vocabulary \
-#  --in_directories  /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title\
-#  --out_files data/custom-vocab
+#python textsum_data_convert.py --command text_to_vocabulary --in_directories  /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title --out_files data/2010_vocab.bin
 
 #python textsum_data_convert.py --command text_to_binary --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title --out_files data/2010-train.bin,data/2010-validation.bin,data/2010-test.bin --split 0.8,0.15,0.05
