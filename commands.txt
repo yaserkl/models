@@ -1,0 +1,38 @@
+bazel-bin/textsum/seq2seq_attention_v2 \
+    --mode=train \
+    --article_key=article \
+    --abstract_key=abstract \
+    --data_path=textsum/data/train.data.filter.txt \
+    --vocab_path=textsum/data/custom_vocab \
+    --log_root=/home/ubuntu/log_root \
+    --train_dir=/home/ubuntu//log_root/train \
+    --block-size=16 \
+    --max_run_steps=100000 \
+    --emb_dim=50 \
+    --w2v_file=/home/ubuntu/glove.6B.50d.txt
+
+
+bazel-bin/textsum/seq2seq_attention_v2 \
+    --mode=eval \
+    --article_key=article \
+    --abstract_key=abstract \
+    --data_path=textsum/data/valid.data.filter.txt \
+    --vocab_path=textsum/data/custom_vocab \
+    --log_root=/home/ubuntu/log_root \
+    --train_dir=/home/ubuntu/log_root/eval \
+    --block-size=16 \
+    --max_run_steps=100000 \
+    --w2v_file=/home/ubuntu/glove.6B.50d.txt
+
+
+bazel-bin/textsum/seq2seq_attention_v2 \
+    --mode=decode \
+    --article_key=article \
+    --abstract_key=abstract \
+    --data_path=textsum/data/test.data.txt \
+    --vocab_path=textsum/data/custom_vocab \
+    --log_root=textsum/log_root \
+    --decode_dir=textsum/log_root/decode \
+    --beam_size=8 \
+    --max_run_steps=100000 \
+    --w2v_file=/home/ubuntu/glove.6B.50d.txt
