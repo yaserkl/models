@@ -68,8 +68,7 @@ def _text_to_vocabulary(article_directory, vocabulary_filename, max_words=200000
 
 def _get_filenames(article_directory, title_directory):
   filenames = []
-  for directory_name in input_directories:
-    filenames.extend([(join(article_directory, f),join(title_directory, f)) for f in listdir(article_directory)])
+  filenames.extend([(join(article_directory, f),join(title_directory, f)) for f in listdir(article_directory)])
   return filenames
 
 def _convert_files_to_binary(input_filenames, start_index, end_index, output_filename):
