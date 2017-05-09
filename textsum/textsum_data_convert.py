@@ -123,13 +123,13 @@ if __name__ == '__main__':
   tf.app.run()
 
 
-python textsum_data_convert.py \
-  --command text_to_vocabulary \
-  --in_directories  /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title\
-  --out_files data/custom-vocab
+#python textsum_data_convert.py \
+#  --command text_to_vocabulary \
+#  --in_directories  /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title\
+#  --out_files data/custom-vocab
 
-python textsum_data_convert.py \
-  --command text_to_binary \
-  --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title \
-  --out_files data/2010-train.bin,data/2010-validation.bin,data/2010-test.bin \
-  --split 0.8,0.15,0.05
+#python textsum_data_convert.py \
+#  --command text_to_binary \
+#  --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title \
+#  --out_files data/2010-train.bin,data/2010-validation.bin,data/2010-test.bin \
+#  --split 0.8,0.15,0.05
