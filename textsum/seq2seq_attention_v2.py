@@ -100,7 +100,8 @@ def _Train(model, data_batcher):
                              save_summaries_secs=60,
                              save_model_secs=FLAGS.checkpoint_secs,
                              global_step=model.global_step)
-    sess = sv.prepare_or_wait_for_session(config=tf.ConfigProto(
+    #gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.7)
+    sess = sv.prepare_or_wait_for_session(config=tf.ConfigProto(#gpu_options=gpu_options,
         allow_soft_placement=True))
     running_avg_loss = 0
     step = 0
@@ -126,7 +127,9 @@ def _Eval(model, data_batcher, vocab=None):
   model.build_graph()
   saver = tf.train.Saver()
   summary_writer = tf.summary.FileWriter(FLAGS.eval_dir)
-  sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
+  gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=0.3)
+  sess = tf.Session(config=tf.ConfigProto(#gpu_options=gpu_options,
+  allow_soft_placement=True))
   running_avg_loss = 0
   step = 0
   while True:
