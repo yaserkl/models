@@ -46,7 +46,7 @@ def _text_to_binary(article_directory, title_directory, output_filenames, split_
 
     start_from_index = end_index
 
-def _text_to_vocabulary(article_directory, vocabulary_filename, max_words=200000):
+def _text_to_vocabulary(article_directory, vocabulary_filename, max_words=40000):
   filenames = _get_filenames(article_directory,article_directory)
 
   counter = collections.Counter()
