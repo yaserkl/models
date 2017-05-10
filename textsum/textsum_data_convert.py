@@ -53,7 +53,7 @@ def _text_to_vocabulary(article_directory, vocabulary_filename, max_words=200000
 
   for article_filename,title_filename in filenames:
     with open(article_filename, 'r') as f:
-      document = f.read().strip().split('\n')[0:2] # first two sentence
+      document = ' '.join(f.read().strip().split('\n')[0:2]) # first two sentence
       words = document.split()
       counter.update(words)
 
