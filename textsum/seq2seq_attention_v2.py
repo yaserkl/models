@@ -133,7 +133,7 @@ def _Eval(model, data_batcher, vocab=None):
   running_avg_loss = 0
   step = 0
   while True:
-    time.sleep(FLAGS.eval_interval_secs)
+    #time.sleep(FLAGS.eval_interval_secs)
     try:
       ckpt_state = tf.train.get_checkpoint_state(FLAGS.log_root)
     except tf.errors.OutOfRangeError as e:
@@ -148,7 +148,7 @@ def _Eval(model, data_batcher, vocab=None):
     saver.restore(sess, ckpt_state.model_checkpoint_path)
 
     (article_batch, abstract_batch, targets, article_lens, abstract_lens,
-     loss_weights, _, _,cnts) = data_batcher.NextBatch()
+     loss_weights, _, _,cnts,bsize) = data_batcher.NextBatch()
     (summaries, loss, train_step) = model.run_eval_step(
         sess, article_batch, abstract_batch, targets, article_lens,
         abstract_lens, loss_weights)
@@ -162,6 +162,7 @@ def _Eval(model, data_batcher, vocab=None):
     summary_writer.add_summary(summaries, train_step)
     running_avg_loss = _RunningAvgLoss(
         running_avg_loss, loss, summary_writer, train_step)
+    step +=1
     print('step: {} \t processing {} to {} \t avg_loss: {}'.format(step, np.min(cnts), np.max(cnts),running_avg_loss))
     if step % 100 == 0:
       summary_writer.flush()
