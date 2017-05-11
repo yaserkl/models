@@ -1,0 +1,61 @@
+python textsum_data_convert.py \
+  --command text_to_vocabulary \
+  --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title \
+  --out_files data/2010-vocab.bin
+
+python textsum_data_convert.py \
+  --command text_to_binary \
+  --in_directories /home/ubuntu/namas/working_2010_sent/line_article,/home/ubuntu/namas/working_2010_sent/title \
+  --out_files 2010-train.bin,2010-validation.bin,2010-test.bin
+  --split 0.8,0.15,0.05
+
+bazel-bin/textsum/seq2seq_attention \
+  --mode=train \
+  --article_key=article \
+  --abstract_key=abstract \
+  --data_path=textsum/data/2010-train.bin \
+  --vocab_path=textsum/data/2010_vocab.bin \
+  --log_root=log_root \
+  --train_dir=log_root/train \
+  --truncate_input=True
+
+
+bazel-bin/textsum/seq2seq_attention_v2 \
+    --mode=train \
+    --article_key=article \
+    --abstract_key=abstract \
+    --data_path=textsum/data/2010-train.bin \
+    --vocab_path=textsum/data/2010-vocab.bin \
+    --log_root=/home/ubuntu/log_root \
+    --train_dir=/home/ubuntu//log_root/train \
+    --block-size=16 \
+    --max_run_steps=100000 \
+    --emb_dim=300 \
+    --w2v_file=/home/ubuntu/glove.6B.300d.txt
+
+bazel-bin/textsum/seq2seq_attention_v2 \
+    --mode=eval \
+    --article_key=article \
+    --abstract_key=abstract \
+    --data_path=textsum/data/2010-validation.bin \
+    --vocab_path=textsum/data/2010-vocab.bin \
+    --log_root=/home/ubuntu/log_root \
+    --train_dir=/home/ubuntu/log_root/eval \
+    --block-size=16 \
+    --max_run_steps=100000 \
+    --emb_dim=300 \
+    --w2v_file=/home/ubuntu/glove.6B.300d.txt
+
+bazel-bin/textsum/seq2seq_attention_v2 \
+    --mode=decode \
+    --article_key=article \
+    --abstract_key=abstract \
+    --data_path=textsum/data/2010-test.bin \
+    --vocab_path=textsum/data/2010-vocab.bin \
+    --log_root=/home/ubuntu/log_root \
+    --decode_dir=/home/ubuntu/log_root/decode \
+    --beam_size=8 \
+    --max_run_steps=100000 \
+    --emb_dim=300 \
+    --w2v_file=/home/ubuntu/glove.6B.300d.txt
+
