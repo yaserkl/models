@@ -98,7 +98,7 @@ class BSDecoder(object):
     sess = tf.Session(config=tf.ConfigProto(allow_soft_placement=True))
     step = 0
     while step < FLAGS.max_decode_steps:
-      time.sleep(DECODE_LOOP_DELAY_SECS)
+      #time.sleep(DECODE_LOOP_DELAY_SECS)
       if not self._Decode(self._saver, sess):
         continue
       step += 1

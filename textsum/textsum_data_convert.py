@@ -42,7 +42,7 @@ def _text_to_binary(article_directory, title_directory, output_filenames, split_
     print(output_filename + ': ' + str(sample_count))
 
     end_index = min(start_from_index + sample_count, len(filenames))
-    _convert_files_to_binary(filenames,start_from_index, end_index,output_filename)
+    _convert_files_to_binary(filenames[start_from_index:end_index],output_filename)
 
     start_from_index = end_index
 
@@ -70,10 +70,9 @@ def _get_filenames(article_directory, title_directory):
   filenames.extend([(join(article_directory, f),join(title_directory, f)) for f in listdir(article_directory)])
   return filenames
 
-def _convert_files_to_binary(input_filenames, start_index, end_index, output_filename):
-  article_filenames = input_filenames[0][start_index:end_index]
-  title_filenames = input_filenames[1][start_index:end_index]
-
+def _convert_files_to_binary(input_filenames, output_filename):
+  article_filenames = [k[0] for k in input_filenames]
+  title_filenames = [k[1] for k in input_filenames]
   with open(output_filename, 'wb') as writer:
     for afilename,tfilename in zip(article_filenames,title_filenames):
       with open(afilename, 'r') as f:
