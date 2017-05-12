@@ -126,7 +126,7 @@ class BSDecoder(object):
     self._decode_io.ResetFiles()
     for _ in xrange(FLAGS.decode_batches_per_ckpt):
       (article_batch, _, _, article_lens, _, _, origin_articles,
-       origin_abstracts) = self._batch_reader.NextBatch()
+       origin_abstracts,cnts,bsize) = self._batch_reader.NextBatch()
       for i in xrange(self._hps.batch_size):
         bs = beam_search.BeamSearch(
             self._model, self._hps.batch_size,
