@@ -50,7 +50,7 @@ tf.app.flags.DEFINE_integer('batch_size', 16,
                             'Maximum number of run steps.')
 tf.app.flags.DEFINE_integer('emb_dim', 50,
                             'Embedding size for word2vec')
-tf.app.flags.DEFINE_integer('max_run_steps', 10000000,
+tf.app.flags.DEFINE_integer('max_run_steps', 100000,
                             'Maximum number of run steps.')
 tf.app.flags.DEFINE_integer('max_article_sentences', 2,
                             'Max number of first sentences to use from the '

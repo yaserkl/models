@@ -151,7 +151,7 @@ class Seq2SeqAttentionModel(object):
             article_lens = self._article_lens
         # Embedding shared by the input and outputs.
         with tf.variable_scope('embedding'), tf.device('/cpu:0'):
-            W = tf.Variable(tf.constant(0.0, shape=[hps.vocab_size, hps.emb_dim]), trainable=False, name="W")
+            W = tf.Variable(tf.constant(0.0, shape=[hps.vocab_size, hps.emb_dim]), trainable=True, name="W")
             embedding = W.assign(self._embedding_placeholder)
             emb_encoder_inputs = [tf.nn.embedding_lookup(embedding, x) for x in encoder_inputs]
             emb_decoder_inputs = [tf.nn.embedding_lookup(embedding, x) for x in decoder_inputs]
@@ -267,17 +267,15 @@ class Seq2SeqAttentionModel(object):
         results = sess.run(
             [self._topk_ids, self._topk_log_probs, self._dec_out_state],
             feed_dict=feed)
-        os.exit()
         ids, probs, states = results[0], results[1], results[2]
         new_states = [s for s in states]
         return ids, probs, new_states
 
     def build_graph(self):
-        tf.reset_default_graph()
+        #tf.reset_default_graph()
         self._add_placeholders()
         self._add_seq2seq()
         self.global_step = tf.Variable(0, name='global_step', trainable=False)
         if self._hps.mode == 'train':
             self._add_train_op()
         self._summaries = tf.summary.merge_all()
-
